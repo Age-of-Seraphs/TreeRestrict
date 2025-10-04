@@ -1,0 +1,16 @@
+[
+	{
+		"op": "addmerge",
+		"path": "/behaviors",
+		"value": [ { "name": "treerestrict:BlockBehaviorSaplingClimate" } ],
+		"side": "server",
+		"file": "game:blocktypes/plant/plaintreesapling.json"
+	},
+	{
+		"op": "addmerge",
+		"path": "/entityBehaviors",
+		"value": [ { "name": "treerestrict:BEBehaviorSaplingClimate" } ],
+		//"side": "server",
+		"file": "game:blocktypes/plant/plaintreesapling.json"
+	}
+]
