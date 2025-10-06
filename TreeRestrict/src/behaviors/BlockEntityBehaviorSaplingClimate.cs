@@ -10,11 +10,17 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.GameContent;
 using TreeRestrict;
+using Vintagestory.API.Util;
+using Vintagestory.ServerMods.NoObf;
 
 namespace TreeRestrict.src.behaviors
 {
     internal class BlockEntityBehaviorSaplingClimate : BlockEntityBehavior
     {
+
+       
+
+
         public BlockEntityBehaviorSaplingClimate(BlockEntity blockEntity)
         : base(blockEntity)
         {
@@ -22,7 +28,6 @@ namespace TreeRestrict.src.behaviors
         public EnumTreeGrowthStage stage;
         
         internal bool growthStunted;
-        
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
             base.GetBlockInfo(forPlayer, dsc);
