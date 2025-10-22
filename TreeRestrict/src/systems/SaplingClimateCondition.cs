@@ -10,14 +10,13 @@ namespace TreeRestrict.src.systems
 {
     public class SaplingClimateCondition
     {
-        public AssetLocation AssetLocation;
+        public AssetLocation AssetLocation = new AssetLocation();
         
         public int MinTemp = -40;
 
         
         public int MaxTemp = 40;
 
-        
         public int MinRain;
 
         
@@ -36,9 +35,30 @@ namespace TreeRestrict.src.systems
         public int MaxForest = 255;
 
         
-        public float MinHeight;
+        public float MinHeight = 1f;
 
         
-        public float MaxHeight = 1f;
+        public float MaxHeight;
+
+        public int TempMid;
+
+        public float TempRange = 1f;
+
+        public int RainMid;
+
+        public float RainRange = 1f;
+
+        public int FertMid;
+
+        public float FertRange = 1f;
+
+        public int ForestMid;
+
+        public float ForestRange = 1f;
+
+        public float HeightMid;
+
+        public float HeightRange = 1f;
+
     }
 }
