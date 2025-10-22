@@ -3,6 +3,7 @@
 		"op": "addmerge",
 		"path": "/behaviors",
 		"value": [ { "name": "treerestrict:BlockBehaviorSaplingClimate" } ],
+		"side": "server",
 		"file": "game:blocktypes/plant/plaintreesapling.json"
 	},
 	{

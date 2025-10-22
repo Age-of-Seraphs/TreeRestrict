@@ -18,31 +18,34 @@ namespace TreeRestrict.src.behaviors
     internal class BlockEntityBehaviorSaplingClimate : BlockEntityBehavior
     {
 
-       
-
-
         public BlockEntityBehaviorSaplingClimate(BlockEntity blockEntity)
         : base(blockEntity)
         {
         }
         public EnumTreeGrowthStage stage;
         
-        internal bool growthStunted;
+        protected int saplingStunts;
+
+        internal string[] stuntedReasons;
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
         {
             base.GetBlockInfo(forPlayer, dsc);
-            dsc.AppendLine("growth Stunted "+growthStunted);
+            dsc.AppendLine("growth Stunted "+saplingStunts);
+        }
+        public void setSaplingStunts(int stunts)
+        {
+            saplingStunts = stunts;
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
-            tree.SetBool("growthStunted", growthStunted);
+            tree.SetInt("saplingStunt", saplingStunts);
         }
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
         {
             base.FromTreeAttributes(tree, worldAccessForResolve);
-            growthStunted = tree.GetBool("growthStunted");
+            saplingStunts = tree.GetInt("saplingStunt");
         }
     }
 }
