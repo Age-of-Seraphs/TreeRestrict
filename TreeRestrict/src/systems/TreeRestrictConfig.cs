@@ -16,5 +16,10 @@ namespace TreeRestrict.src.systems
         public bool enableStuntedGrowthForest = true;
         public bool enableStuntedGrowthHeight = true;
 
+        public float temperatureRangeMultiplier = 1f;
+        public float rainRangeMultiplier = 1f;
+        public float fertilityRangeMultiplier = 1f;
+        public float forestRangeMultiplier = 1f;
+        public float heightRangeMultiplier = 1f;
     }
 }
