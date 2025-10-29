@@ -51,23 +51,6 @@ namespace TreeRestrict
                     MaxForest = group.Max(item => item.MaxForest) / 255f,
                     MinHeight = group.Min(item => item.MinHeight),
                     MaxHeight = group.Max(item => item.MaxHeight),
-
-                    /*
-                    TempMid = (int)(group.Max(item => item.MaxTemp) + group.Min(item => item.MinTemp)) / 2,
-                    TempRange = (int)(group.Max(item => item.MaxTemp) - group.Min(item => item.MinTemp)) / 2,
-
-                    RainMid = (int)(group.Max(item => item.MaxRain) + group.Min(item => item.MinRain)) / 2,
-                    RainRange = (int)(group.Max(item => item.MaxRain) - group.Min(item => item.MinRain)) / 2,
-
-                    FertMid = (int)(group.Max(item => item.MaxFert) + group.Min(item => item.MinFert)) / 2,
-                    FertRange = (int)(group.Max(item => item.MaxFert) - group.Min(item => item.MinFert)) / 2,
-
-                    ForestMid = (int)(group.Max(item => item.MaxForest) + group.Min(item => item.MinForest)) / 2,
-                    ForestRange = (int)(group.Max(item => item.MaxForest) - group.Min(item => item.MinForest)) / 2,
-
-                    HeightMid = (int)(group.Max(item => item.MaxHeight) + group.Min(item => item.MinHeight)) / 2,
-                    HeightRange = (float)(group.Max(item => item.MaxHeight) - group.Min(item => item.MinHeight)) / 2
-                    */
                 })
                 .ToDictionary(x => x.AssetLocation.Path, x => x);
         }
