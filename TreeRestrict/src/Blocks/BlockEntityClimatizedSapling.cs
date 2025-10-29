@@ -378,11 +378,6 @@ namespace TreeRestrict.src.Blocks
         public static float GetSignedRangeDeviation(float value, float min, float max)
         {
             return value - Math.Clamp(value, min, max);
-            if (value < min)
-                return value - min;  // negative: below min
-            if (value > max)
-                return value - max;  // positive: above max
-            return 0f;               // inside range
         }
     }
 }
