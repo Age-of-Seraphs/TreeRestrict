@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TreeRestrict.src.behaviors;
+using TreeRestrict.src.Blocks;
 using TreeRestrict.src.systems;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -26,9 +27,9 @@ namespace TreeRestrict
             {
                 LoadServersideConfig((ICoreServerAPI)api);
             }
-
-            api.RegisterBlockBehaviorClass(modid + ":BlockBehaviorSaplingClimate", typeof(BlockBehaviorSaplingClimate));
-            api.RegisterBlockEntityBehaviorClass(modid + ":BEBehaviorSaplingClimate", typeof(BlockEntityBehaviorSaplingClimate));
+            api.RegisterBlockEntityClass(modid + ":BlockEntityClimatizedSapling", typeof(BlockEntityClimatizedSapling));
+           // api.RegisterBlockBehaviorClass(modid + ":BlockBehaviorSaplingClimate", typeof(BlockBehaviorSaplingClimate));
+         //   api.RegisterBlockEntityBehaviorClass(modid + ":BEBehaviorSaplingClimate", typeof(BlockEntityBehaviorSaplingClimate));
         }
 
         public override void AssetsLoaded(ICoreAPI api)
@@ -36,22 +37,22 @@ namespace TreeRestrict
             if (api.Side == EnumAppSide.Client) { return; }
 
             var treeVariants = api.Assets.Get("worldgen/treengenproperties.json").ToObject<TreeGenProperties>().TreeGens;
-
             api.ObjectCache["saplingClimateConditionCache"] = treeVariants.GroupBy(item => item.Generator.Path.ToString())
                 .Select(group => new SaplingClimateCondition
                 {
                     AssetLocation = group.First().Generator,
-                    MinTemp = (int)group.Min(item => item.MinTemp),
-                    MaxTemp = (int)group.Max(item => item.MaxTemp),
-                    MinRain = (int)group.Min(item => item.MinRain),
-                    MaxRain = (int)group.Min(item => item.MaxRain),
-                    MinFert = (int)group.Min(item => item.MinFert),
-                    MaxFert = (int)group.Min(item => item.MaxFert),
-                    MinForest = (int)group.Min(item => item.MinForest),
-                    MaxForest = (int)group.Min(item => item.MaxForest),
+                    MinTemp = Climate.DescaleTemperature(group.Min(item => item.MinTemp)),
+                    MaxTemp = Climate.DescaleTemperature(group.Max(item => item.MaxTemp)),
+                    MinRain = group.Min(item => item.MinRain) / 255f,
+                    MaxRain = group.Max(item => item.MaxRain) / 255f,
+                    MinFert = group.Min(item => item.MinFert) / 255f,
+                    MaxFert = group.Max(item => item.MaxFert) / 255f,
+                    MinForest = group.Min(item => item.MinForest) / 255f,
+                    MaxForest = group.Max(item => item.MaxForest) / 255f,
                     MinHeight = group.Min(item => item.MinHeight),
-                    MaxHeight = group.Min(item => item.MaxHeight),
+                    MaxHeight = group.Max(item => item.MaxHeight),
 
+                    /*
                     TempMid = (int)(group.Max(item => item.MaxTemp) + group.Min(item => item.MinTemp)) / 2,
                     TempRange = (int)(group.Max(item => item.MaxTemp) - group.Min(item => item.MinTemp)) / 2,
 
@@ -66,6 +67,7 @@ namespace TreeRestrict
 
                     HeightMid = (int)(group.Max(item => item.MaxHeight) + group.Min(item => item.MinHeight)) / 2,
                     HeightRange = (float)(group.Max(item => item.MaxHeight) - group.Min(item => item.MinHeight)) / 2
+                    */
                 })
                 .ToDictionary(x => x.AssetLocation.Path, x => x);
         }

@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="OpenTK.Graphics">
+      <HintPath>..\..\..\..\..\Games\Non Steam &amp; Itch games\Vintagestory\Lib\OpenTK.Graphics.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp">
+      <HintPath>..\..\..\..\..\Games\Non Steam &amp; Itch games\Vintagestory\Lib\SkiaSharp.dll</HintPath>
+    </Reference>
     <Reference Include="VintagestoryAPI">
       <HintPath>$(VINTAGE_STORY)/VintagestoryAPI.dll</HintPath>
       <Private>false</Private>

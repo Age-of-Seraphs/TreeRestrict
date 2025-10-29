@@ -12,53 +12,32 @@ namespace TreeRestrict.src.systems
     {
         public AssetLocation AssetLocation = new AssetLocation();
         
-        public int MinTemp = -40;
+        public int MinTemp = 0;
 
         
-        public int MaxTemp = 40;
+        public int MaxTemp = 255;
 
-        public int MinRain;
-
-        
-        public int MaxRain = 255;
+        public float MinRain = 0f;
 
         
-        public int MinFert;
+        public float MaxRain = 1f;
 
         
-        public int MaxFert = 255;
+        public float MinFert = 0f;
 
         
-        public int MinForest;
+        public float MaxFert = 1f;
 
         
-        public int MaxForest = 255;
+        public float MinForest = 1f;
 
         
-        public float MinHeight = 1f;
+        public float MaxForest = 1f;
 
         
-        public float MaxHeight;
+        public float MinHeight = 0f;
 
-        public int TempMid;
-
-        public float TempRange = 1f;
-
-        public int RainMid;
-
-        public float RainRange = 1f;
-
-        public int FertMid;
-
-        public float FertRange = 1f;
-
-        public int ForestMid;
-
-        public float ForestRange = 1f;
-
-        public float HeightMid;
-
-        public float HeightRange = 1f;
-
+        
+        public float MaxHeight = 1f;
     }
 }
