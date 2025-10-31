@@ -359,7 +359,7 @@ namespace TreeRestrict.src.Blocks
                 {
                     
                     
-                    climateFlags[0] = GetSignedRangeDeviation(nowClimate.Temperature + 20, cond.MinTemp + 20, cond.MaxTemp + 20) * 1/60f;
+                      climateFlags[0] = GetSignedRangeDeviation(nowClimate.Temperature + 20, cond.MinTemp + 20, cond.MaxTemp + 20) * 1/60f;
                 }
                 if (modConfig.enableStuntedGrowthRain)
                 {
@@ -377,7 +377,7 @@ namespace TreeRestrict.src.Blocks
                 }
                 if (modConfig.enableStuntedGrowthHeight)
                 {
-                    float heightRel = ((float)Pos.Y - TerraGenConfig.seaLevel) / ((float)Api.World.BlockAccessor.MapSizeY - TerraGenConfig.seaLevel);
+                    float heightRel = ((float)Pos.Y  /(float)Api.World.BlockAccessor.MapSizeY);
                     climateFlags[4] = GetSignedRangeDeviation(heightRel, cond.MinHeight, cond.MaxHeight);
 
                     if (climateFlags[4] != 0)
