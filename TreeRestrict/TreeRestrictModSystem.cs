@@ -56,8 +56,8 @@ namespace TreeRestrict
                     MinForest = Math.Clamp(group.Min(item => item.MinForest) + serverConfig.MinForestAddition, 0, 255) / 255f,
                     MaxForest = Math.Clamp(group.Max(item => item.MaxForest) + serverConfig.MaxForestAddition, 0, 255) / 255f,
 
-                    MinHeight = Math.Clamp(group.Min(item => item.MinHeight) + serverConfig.MinHeightAddition, 0, 1),
-                    MaxHeight = Math.Clamp(group.Max(item => item.MaxHeight) + serverConfig.MaxHeightAddition, 0, 1)
+                    MinHeight = Math.Clamp(group.Min(item => item.MinHeight) + serverConfig.MinHeightAddition, 0f, 1f),
+                    MaxHeight = Math.Clamp(group.Max(item => item.MaxHeight) + serverConfig.MaxHeightAddition, 0f, 1f)
                 });
             /*    
             .Select(group => new SaplingClimateCondition
