@@ -9,18 +9,27 @@ namespace TreeRestrict.src.systems
 {
     public class TreeRestrictConfig
     {
+        
         public bool enableDebugLogging = false;
 
         public bool enableStuntedGrowthTempurature = true;
         public bool enableStuntedGrowthRain = true;
         public bool enableStuntedGrowthFertility = true;
-        public bool enableStuntedGrowthForest = true;
+        public bool enableStuntedGrowthForest = false;
         public bool enableStuntedGrowthHeight = true;
 
-        //these are added to all objects in treegenproperties.json for each respective property. (0 - 255)
-        public int MinTempAddition = 0;
-        public int MaxTempAddition = 0;
+        //Growth Multipliers for vars. Set to 0 to disable it.
+        public float climateGrowthMod = 17f;
+        //public float rainfallGrowthMul = 0;
+        //public float fertilityGrowthMul = 0;
+        //public float forestDensityGrowthMul = 0;
+        //public float heightGrowthMul = 0;
 
+        //(-20 | 40)
+        public float MinTempAddition = 0;
+        public float MaxTempAddition = 0;
+
+        //these are added to all objects in treegenproperties.json for each respective property. (0 | 255)
         public int MinRainAddition = 0;
         public int MaxRainAddition = 0;
 
@@ -38,28 +47,16 @@ namespace TreeRestrict.src.systems
         public float heightMinBound = 0f;
         public float heightMaxBoundAddition = 0f;
 
-
-        // SaplingClimateCondition categories. Blacklist will prevent the treeGens in the array from being entered into the object cache. Objects in wh whitelist will be categorized by the key value
-        /*
-        public string[] treeGenWhitelist = new string[]
+        public Dictionary<string, string[]> treeGenCategories = new Dictionary<string, string[]>
         {
-            silverbirch:["riverbirch","himalayanbirch"],
-            "englishoak":["oldenglishoak"],
-            "larch":["deepforestlarch" ],
-            "sugarmaple":["japanesemaple","norwaymaple","mountainmaple" ],
-             "scotspine":["bristleconepine","mountainpine"] 
+            {"silverbirch",["riverbirch", "himalayanbirch"] },
+            { "englishoak" , ["oldenglishoak"]},
+            {"sugarmaple" , ["japanesemaple", "norwaymaple", "mountainmaple"] },
+            {"scotspine" , ["bristleconepine", "mountainpine","fir"] },
+            {"larch" , ["deepforestlarch"] },
+            {"baldcypress",["baldcypressswamp"] },
+            {"kapok",["largekapok", "largekapok2","oldkapok"] }
         };
-        */
-        private class treeGenWhitelistDefault
-        {
-            public string[] silverbirch = ["riverbirch", "himalayanbirch"];
-            public string[] englishoak = ["oldenglishoak"];
-            public string[] larch = ["deepforestlarch"];
-            public string[] sugarmaple = ["japanesemaple", "norwaymaple", "mountainmaple"];
-            //public string[] scotspine = ["bristleconepine", "mountainpine"];
-        };
-
-        public object treeGenWhitelist = new treeGenWhitelistDefault();
 
         public string[] treeGenBlacklist = new string[] {"bamboo-grown-green", "bamboo-grown-brown" };
 

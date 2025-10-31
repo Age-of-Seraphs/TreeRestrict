@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.Common;
@@ -10,12 +11,13 @@ namespace TreeRestrict.src.systems
 {
     public class SaplingClimateCondition
     {
-        public AssetLocation AssetLocation = new AssetLocation();
+        public HashSet<string> AssetLocations = new HashSet<string>();
+        //new List<AssetLocation>();
         
-        public int MinTemp = 0;
+        public float MinTemp = -20f;
 
         
-        public int MaxTemp = 255;
+        public float MaxTemp = 40f;
 
         public float MinRain = 0f;
 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using TreeRestrict.src.Blocks;
 using TreeRestrict.src.systems;
@@ -34,28 +35,63 @@ namespace TreeRestrict
         {
             if (api.Side == EnumAppSide.Client) { return; }
 
-            var treeVariants = api.Assets.Get("worldgen/treengenproperties.json").ToObject<TreeGenProperties>().TreeGens;
-            api.ObjectCache["saplingClimateConditionCache"] = treeVariants.GroupBy(item => item.Generator.Path.ToString())
-                .Select(group => new SaplingClimateCondition
+            var treeVariants = api.Assets.Get("worldgen/treengenproperties.json").ToObject<TreeGenProperties>()
+                .TreeGens.Where(x => !serverConfig.treeGenBlacklist.Contains(x.Generator.ToShortString()));
+
+            api.ObjectCache["saplingClimateConditionCache"] = treeVariants
+                .GroupBy(item => withinTreeGenCatagories(item.Generator.Path.ToString()))
+                .ToDictionary(x => x.Key, group => new SaplingClimateCondition
                 {
-                    AssetLocation = group.First().Generator,
-                    
-                    MinTemp = Math.Clamp(Climate.DescaleTemperature(group.Min(item => item.MinTemp)), 0, 255),
-                    MaxTemp = Math.Clamp(Climate.DescaleTemperature(group.Max(item => item.MaxTemp)), 0, 255),
-                    
+                    AssetLocations = group.Select(item => item.Generator.Path.ToString()).ToHashSet(),
+
+                    MinTemp = Math.Clamp(group.Min(item => item.MinTemp + serverConfig.MinTempAddition), -20f, 40f),
+                    MaxTemp =  Math.Clamp(group.Max(item => item.MaxTemp + serverConfig.MaxTempAddition), -20f, 40f),
+
                     MinRain = Math.Clamp(group.Min(item => item.MinRain) + serverConfig.MinRainAddition, 0, 255) / 255f,
-                    MaxRain = Math.Clamp(group.Max(item => item.MaxRain) + serverConfig.MaxRainAddition, 0,255) / 255f,
-                    
+                    MaxRain = Math.Clamp(group.Max(item => item.MaxRain) + serverConfig.MaxRainAddition, 0, 255) / 255f,
+
                     MinFert = Math.Clamp(group.Min(item => item.MinFert) + serverConfig.MinFertAddition, 0, 255) / 255f,
                     MaxFert = Math.Clamp(group.Max(item => item.MaxFert) + serverConfig.MaxFertAddition, 0, 255) / 255f,
-                    
+
+                    MinForest = Math.Clamp(group.Min(item => item.MinForest) + serverConfig.MinForestAddition, 0, 255) / 255f,
+                    MaxForest = Math.Clamp(group.Max(item => item.MaxForest) + serverConfig.MaxForestAddition, 0, 255) / 255f,
+
+                    MinHeight = Math.Clamp(group.Min(item => item.MinHeight) + serverConfig.MinHeightAddition, 0, 1),
+                    MaxHeight = Math.Clamp(group.Max(item => item.MaxHeight) + serverConfig.MaxHeightAddition, 0, 1)
+                });
+            /*    
+            .Select(group => new SaplingClimateCondition
+                {
+                    AssetLocations = group.Select(item => item.Generator.Path.ToString()).ToHashSet(),
+
+                    MinTemp = Math.Clamp(group.Min(item => item.MinTemp), -50f, 40f),
+                    MaxTemp = Math.Clamp(group.Max(item => item.MaxTemp), -50f, 40f),
+
+                    MinRain = Math.Clamp(group.Min(item => item.MinRain) + serverConfig.MinRainAddition, 0, 255) / 255f,
+                    MaxRain = Math.Clamp(group.Max(item => item.MaxRain) + serverConfig.MaxRainAddition, 0, 255) / 255f,
+
+                    MinFert = Math.Clamp(group.Min(item => item.MinFert) + serverConfig.MinFertAddition, 0, 255) / 255f,
+                    MaxFert = Math.Clamp(group.Max(item => item.MaxFert) + serverConfig.MaxFertAddition, 0, 255) / 255f,
+
                     MinForest = Math.Clamp(group.Min(item => item.MinForest) + serverConfig.MinForestAddition, 0, 255) / 255f,
                     MaxForest = Math.Clamp(group.Max(item => item.MaxForest) + serverConfig.MaxForestAddition, 0, 255) / 255f,
 
                     MinHeight = Math.Clamp(group.Min(item => item.MinHeight) + serverConfig.MinHeightAddition, 0, 1),
                     MaxHeight = Math.Clamp(group.Max(item => item.MaxHeight) + serverConfig.MaxHeightAddition, 0, 1)
                 })
-                .ToDictionary(x => x.AssetLocation.Path, x => x);
+                */
+        }
+        private string withinTreeGenCatagories(string generator)
+        {
+            foreach (var entry in serverConfig.treeGenCategories)
+            {
+                if (entry.Value.Contains(generator))
+                {
+                    return entry.Key;
+                }
+            }
+            return generator;
+            
         }
         private void LoadServersideConfig(ICoreServerAPI api)
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -76,6 +77,8 @@ namespace TreeRestrict.src.Blocks
 
         #region climate vars
 
+        private HashSet<string> treeGens;
+
         private bool canGrowEver;
 
         private float[] climateFlags;
@@ -88,14 +91,7 @@ namespace TreeRestrict.src.Blocks
             }
         }
 
-        private float GrowthRateModClimate
-        {
-            get
-            {
-                ClimateCondition placeClimate = Api.World.BlockAccessor.GetClimateAt(Pos, EnumGetClimateMode.WorldGenValues);
-                return 1f;
-            }
-        }
+        private float GrowthRateModClimate;
         #endregion climate vars
 
         public override void Initialize(ICoreAPI api)
@@ -104,7 +100,7 @@ namespace TreeRestrict.src.Blocks
 
             if (api is ICoreServerAPI)
             {
-                if (climateFlags == null)
+                if (climateFlags == null || treeGens == null)
                 {
                     setClimateFlags();
                 }
@@ -118,10 +114,9 @@ namespace TreeRestrict.src.Blocks
 
         public override void OnBlockPlaced(ItemStack byItemStack = null)
         {
-
             stage = ((!(byItemStack?.Collectible is ItemTreeSeed)) ? EnumTreeGrowthStage.Sapling : EnumTreeGrowthStage.Seed);
             plantedFromSeed = stage == EnumTreeGrowthStage.Seed;
-            totalHoursTillGrowth = Api.World.Calendar.TotalHours + (double)(nextStageDaysRnd.nextFloat(1f, Api.World.Rand) * 24f * GrowthRateMod);
+            totalHoursTillGrowth = Api.World.Calendar.TotalHours + (double)(nextStageDaysRnd.nextFloat(1f, Api.World.Rand) * 24f * GrowthRateMod * GrowthRateModClimate);
         }
 
         private void CheckGrow(float dt)
@@ -134,7 +129,7 @@ namespace TreeRestrict.src.Blocks
             if (stage == EnumTreeGrowthStage.Seed)
             {
                 stage = EnumTreeGrowthStage.Sapling;
-                totalHoursTillGrowth = Api.World.Calendar.TotalHours + (double)(nextStageDaysRnd.nextFloat(1f, Api.World.Rand) * 24f * GrowthRateMod);
+                totalHoursTillGrowth = Api.World.Calendar.TotalHours + (double)(nextStageDaysRnd.nextFloat(1f, Api.World.Rand) * 24f * GrowthRateMod * GrowthRateModClimate);
                 MarkDirty(redrawOnClient: true);
                 return;
             }
@@ -152,7 +147,7 @@ namespace TreeRestrict.src.Blocks
             }
 
             string text = Api.World.BlockAccessor.GetBlock(Pos).Attributes?["treeGen"].AsString();
-            if (text == null || canGrowEver)
+            if (text == null || !canGrowEver)
             {
                 UnregisterGameTickListener(growListenerId);
                 growListenerId = 0L;
@@ -189,6 +184,11 @@ namespace TreeRestrict.src.Blocks
             tree.SetInt("growthStage", (int)stage);
             tree.SetBool("plantedFromSeed", plantedFromSeed);
             tree.SetBool("canGrowEver", canGrowEver);
+            tree.SetFloat("growthRateModClimate", GrowthRateModClimate);
+            if (treeGens != null)
+            {
+                tree.SetString("treeGens", string.Join(',', treeGens));
+            }
             tree.SetString("climateFlags", string.Join(",", climateFlags));
         }
 
@@ -199,6 +199,12 @@ namespace TreeRestrict.src.Blocks
             stage = (EnumTreeGrowthStage)tree.GetInt("growthStage", 1);
             plantedFromSeed = tree.GetBool("plantedFromSeed");
             canGrowEver = tree.GetBool("canGrowEver");
+            GrowthRateModClimate = tree.GetFloat("growthRateModClimate", 1f);
+            var treeGenString = tree.GetString("treeGens");
+            if (treeGenString != null)
+            {
+                treeGens = treeGenString.Split(',').ToHashSet();
+            }
             var stringFlags = tree.GetString("climateFlags");
             if (stringFlags != null)
             {
@@ -292,7 +298,12 @@ namespace TreeRestrict.src.Blocks
                 {
                     dsc.AppendLine(Lang.Get("This {0} will never grow at this altitude. It is too {1}!", stage, (climateFlags[4] > 0) ? "High" : "Low"));
                 }
+                dsc.AppendLine();
+                dsc.AppendLine("[T,R,Fe,Fd,E]");
                 dsc.AppendLine(Lang.Get("[{0}]", string.Join(", ", climateFlags)));
+                dsc.AppendLine(Lang.Get("TreeGens: " + "[{0}]", string.Join(", ", treeGens)));
+                dsc.AppendLine(Lang.Get("sum: "+climateFlags.Select(x => Math.Abs(x)).Sum()+1));
+
             }
             #endregion blockinfoclimatetags
         }
@@ -315,7 +326,7 @@ namespace TreeRestrict.src.Blocks
 
         private void setClimateFlags()
         {
-            Dictionary<string, SaplingClimateCondition> saplingClimateConds = ObjectCacheUtil.TryGet<Dictionary<string, SaplingClimateCondition>>(Api, "saplingClimateConditionCache");
+            Dictionary<string,SaplingClimateCondition> saplingClimateConds = ObjectCacheUtil.TryGet<Dictionary<string, SaplingClimateCondition>>(Api, "saplingClimateConditionCache");
             string text = Api.World.BlockAccessor.GetBlock(Pos).Attributes?["treeGen"].AsString();
             canGrowEver = true;
 
@@ -339,14 +350,16 @@ namespace TreeRestrict.src.Blocks
 
             var modConfig = TreeRestrictModSystem.serverConfig;
             climateFlags = new float[5];
-
+            treeGens = new HashSet<string>();
             if (saplingClimateConds.TryGetValue(text, out SaplingClimateCondition cond))
             {
+                treeGens.AddRange(cond.AssetLocations);
+
                 if (modConfig.enableStuntedGrowthTempurature)
                 {
                     
-                    var descaledTemp = Climate.DescaleTemperature(nowClimate.Temperature);
-                    climateFlags[0] = descaledTemp - Math.Clamp(descaledTemp, cond.MinTemp, cond.MaxTemp);
+                    
+                    climateFlags[0] = GetSignedRangeDeviation(nowClimate.Temperature + 20, cond.MinTemp + 20, cond.MaxTemp + 20) * 1/60f;
                 }
                 if (modConfig.enableStuntedGrowthRain)
                 {
@@ -372,9 +385,11 @@ namespace TreeRestrict.src.Blocks
                         canGrowEver = false;
                     }
                 }
+                GrowthRateModClimate = (1f + climateFlags.Select(x => Math.Abs(x)).Sum() * modConfig.climateGrowthMod);
                 Api.Logger.Event("[{0}]", string.Join(",", climateFlags));
             }
         }
+        
         public static float GetSignedRangeDeviation(float value, float min, float max)
         {
             return value - Math.Clamp(value, min, max);
