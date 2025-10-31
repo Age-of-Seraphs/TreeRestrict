@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TreeRestrict.src.Config;
 using TreeRestrict.src.systems;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -76,6 +77,8 @@ namespace TreeRestrict.src.Blocks
         private float GrowthRateMod => Api.World.Config.GetString("saplingGrowthRate").ToFloat(1f);
 
         #region climate vars
+
+        static TreeRestrictServerConfig modConfig = TreeRestrictModSystem.serverConfig;
 
         private HashSet<string> treeGens;
 
@@ -298,11 +301,16 @@ namespace TreeRestrict.src.Blocks
                 {
                     dsc.AppendLine(Lang.Get("This {0} will never grow at this altitude. It is too {1}!", stage, (climateFlags[4] > 0) ? "High" : "Low"));
                 }
-                dsc.AppendLine();
-                dsc.AppendLine("[T,R,Fe,Fd,E]");
-                dsc.AppendLine(Lang.Get("[{0}]", string.Join(", ", climateFlags)));
-                dsc.AppendLine(Lang.Get("TreeGens: " + "[{0}]", string.Join(", ", treeGens)));
-                dsc.AppendLine(Lang.Get("sum: "+climateFlags.Select(x => Math.Abs(x)).Sum()+1));
+                if(TreeRestrictModSystem.clientConfig.DebugMode)
+                {
+                    dsc.AppendLine($"| Tempurature | {climateFlags[0],8:F6} | {climateFlags[0] * 60,8:F6} |");
+                    dsc.AppendLine($"| Rainfall | {climateFlags[1],8:F6} | {climateFlags[1] * 255,8:F6} |");
+                    dsc.AppendLine($"| Fertility | {climateFlags[2],8:F6} | {climateFlags[2] * 255,8:F6} |");
+                    dsc.AppendLine($"| Forest Density | {climateFlags[3],8:F6} | {climateFlags[3] * 255,8:F6} |");
+                    dsc.AppendLine($"| Height | {climateFlags[4],8:F6} | {climateFlags[4] * Api.World.BlockAccessor.MapSizeY,8:F6} |");
+                    dsc.AppendLine(Lang.Get("\nTotal Growth Multiplier: " + climateFlags.Select(x => Math.Abs(x)).Sum() + 1));
+                }
+                
 
             }
             #endregion blockinfoclimatetags
@@ -348,7 +356,6 @@ namespace TreeRestrict.src.Blocks
 
             }
 
-            var modConfig = TreeRestrictModSystem.serverConfig;
             climateFlags = new float[5];
             treeGens = new HashSet<string>();
             if (saplingClimateConds.TryGetValue(text, out SaplingClimateCondition cond))

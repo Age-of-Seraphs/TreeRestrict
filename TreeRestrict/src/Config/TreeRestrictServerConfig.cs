@@ -5,13 +5,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace TreeRestrict.src.systems
+namespace TreeRestrict.src.Config
 {
-    public class TreeRestrictConfig
+    public class TreeRestrictServerConfig
     {
-        
-        public bool enableDebugLogging = false;
-
         public bool enableStuntedGrowthTempurature = true;
         public bool enableStuntedGrowthRain = true;
         public bool enableStuntedGrowthFertility = true;

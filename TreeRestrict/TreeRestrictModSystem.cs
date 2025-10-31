@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using TreeRestrict.src.Blocks;
+using TreeRestrict.src.Config;
 using TreeRestrict.src.systems;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -19,14 +20,19 @@ namespace TreeRestrict
 {
     public class TreeRestrictModSystem : ModSystem
     {
-        public static TreeRestrictConfig serverConfig;
+        public static TreeRestrictServerConfig serverConfig;
+
+        public static TreeRestrictClientConfig clientConfig;
         public override void Start(ICoreAPI api)
         {
-            var modid = this.Mod.Info.ModID;
+            var modid = Mod.Info.ModID;
+            if (api.Side == EnumAppSide.Client)
+            {
+                LoadClientsideConfig((ICoreClientAPI)api);
+            }
             if (api.Side == EnumAppSide.Server)
             {
                 LoadServersideConfig((ICoreServerAPI)api);
-                api.Logger.Event(serverConfig.ToString());
             }
             api.RegisterBlockEntityClass(modid + ":BlockEntityClimatizedSapling", typeof(BlockEntityClimatizedSapling));
         }
@@ -97,20 +103,40 @@ namespace TreeRestrict
         {
             try
             {
-                serverConfig = api.LoadModConfig<TreeRestrictConfig>("treerestrict-server.json");
+                serverConfig = api.LoadModConfig<TreeRestrictServerConfig>("treerestrict-server.json");
                 if (serverConfig == null) //if the 'MyConfigData.json' file isn't found...
                 {
-                    serverConfig = new TreeRestrictConfig();
+                    serverConfig = new TreeRestrictServerConfig();
                 }
                 //Save a copy of the mod config.
-                api.StoreModConfig<TreeRestrictConfig>(serverConfig, "treerestrict-server.json");
+                api.StoreModConfig<TreeRestrictServerConfig>(serverConfig, "treerestrict-server.json");
             }
             catch (Exception e)
             {
                 //Couldn't load the mod config... Create a new one with default settings, but don't save it.
-                Mod.Logger.Error("Could not load config! Loading default settings instead.");
+                Mod.Logger.Error("Could not load treeRestrict server config! Loading default settings instead.");
                 Mod.Logger.Error(e);
-                serverConfig = new TreeRestrictConfig();
+                serverConfig = new TreeRestrictServerConfig();
+            }
+        }
+        private void LoadClientsideConfig(ICoreClientAPI api)
+        {
+            try
+            {
+                clientConfig = api.LoadModConfig<TreeRestrictClientConfig>("treerestrict-client.json");
+                if (clientConfig == null) //if the 'MyConfigData.json' file isn't found...
+                {
+                    clientConfig = new TreeRestrictClientConfig();
+                }
+                //Save a copy of the mod config.
+                api.StoreModConfig<TreeRestrictClientConfig>(clientConfig, "treerestrict-client.json");
+            }
+            catch (Exception e)
+            {
+                //Couldn't load the mod config... Create a new one with default settings, but don't save it.
+                Mod.Logger.Error("Could not load treeRestrict client config! Loading default settings instead.");
+                Mod.Logger.Error(e);
+                clientConfig = new TreeRestrictClientConfig();
             }
         }
     }
