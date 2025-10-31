@@ -19,15 +19,15 @@ namespace TreeRestrict.src.systems
         public bool enableStuntedGrowthHeight = true;
 
         //Growth Multipliers for vars. Set to 0 to disable it.
-        public float climateGrowthMod = 17f;
+        public float climateGrowthMod = 12f;
         //public float rainfallGrowthMul = 0;
         //public float fertilityGrowthMul = 0;
         //public float forestDensityGrowthMul = 0;
         //public float heightGrowthMul = 0;
 
         //(-20 | 40)
-        public float MinTempAddition = 0;
-        public float MaxTempAddition = 0;
+        public float MinTempAddition = 0f;
+        public float MaxTempAddition = 0f;
 
         //these are added to all objects in treegenproperties.json for each respective property. (0 | 255)
         public int MinRainAddition = 0;
@@ -43,8 +43,8 @@ namespace TreeRestrict.src.systems
         public int MaxHeightAddition = 0;
 
         //height ingame is normally between 0 and 1. These here are added to the min and max height values from the tree gen properties. They are very sensetive.
-        //setting both to 1f will essentially disable things.
-        public float heightMinBound = 0f;
+        //setting both to 1f will essentially disable height checks.
+        public float heightMinBound = 1f;
         public float heightMaxBoundAddition = 0f;
 
         public Dictionary<string, string[]> treeGenCategories = new Dictionary<string, string[]>
