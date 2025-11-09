@@ -1,5 +1,6 @@
 [
 	{
+		"enabled": false,
 		"op": "replace",
 		"path": "/entityclassByType/*",
 		"value": "treerestrict:BlockEntityClimatizedSapling",

@@ -1,4 +1,5 @@
 ﻿using Cairo;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
+using Vintagestory.Client.NoObf;
 using Vintagestory.Common;
 using Vintagestory.ServerMods.NoObf;
 
@@ -23,9 +25,11 @@ namespace TreeRestrict
         public static TreeRestrictServerConfig serverConfig;
 
         public static TreeRestrictClientConfig clientConfig;
+
+        string modid = "treerestrict";
         public override void Start(ICoreAPI api)
         {
-            var modid = Mod.Info.ModID;
+            modid = Mod.Info.ModID;
             if (api.Side == EnumAppSide.Client)
             {
                 LoadClientsideConfig((ICoreClientAPI)api);
@@ -34,7 +38,8 @@ namespace TreeRestrict
             {
                 LoadServersideConfig((ICoreServerAPI)api);
             }
-            api.RegisterBlockEntityClass(modid + ":BlockEntityClimatizedSapling", typeof(BlockEntityClimatizedSapling));
+            api.RegisterBlockEntityClass("Sapling", typeof(BlockEntityClimatizedSapling));
+            //modid + ":BlockEntityClimatizedSapling"
         }
 
         public override void AssetsLoaded(ICoreAPI api)
@@ -65,27 +70,22 @@ namespace TreeRestrict
                     MinHeight = Math.Clamp(group.Min(item => item.MinHeight) + serverConfig.MinHeightAddition, 0f, 1f),
                     MaxHeight = Math.Clamp(group.Max(item => item.MaxHeight) + serverConfig.MaxHeightAddition, 0f, 1f)
                 });
-            /*    
-            .Select(group => new SaplingClimateCondition
+            /*
+            foreach (CollectibleObject obj in api.World.Collectibles)
+            {
+                // Make sure collectible or its code is not null
+                if (obj == null || obj.Code == null)
                 {
-                    AssetLocations = group.Select(item => item.Generator.Path.ToString()).ToHashSet(),
+                    continue;
+                }
 
-                    MinTemp = Math.Clamp(group.Min(item => item.MinTemp), -50f, 40f),
-                    MaxTemp = Math.Clamp(group.Max(item => item.MaxTemp), -50f, 40f),
-
-                    MinRain = Math.Clamp(group.Min(item => item.MinRain) + serverConfig.MinRainAddition, 0, 255) / 255f,
-                    MaxRain = Math.Clamp(group.Max(item => item.MaxRain) + serverConfig.MaxRainAddition, 0, 255) / 255f,
-
-                    MinFert = Math.Clamp(group.Min(item => item.MinFert) + serverConfig.MinFertAddition, 0, 255) / 255f,
-                    MaxFert = Math.Clamp(group.Max(item => item.MaxFert) + serverConfig.MaxFertAddition, 0, 255) / 255f,
-
-                    MinForest = Math.Clamp(group.Min(item => item.MinForest) + serverConfig.MinForestAddition, 0, 255) / 255f,
-                    MaxForest = Math.Clamp(group.Max(item => item.MaxForest) + serverConfig.MaxForestAddition, 0, 255) / 255f,
-
-                    MinHeight = Math.Clamp(group.Min(item => item.MinHeight) + serverConfig.MinHeightAddition, 0, 1),
-                    MaxHeight = Math.Clamp(group.Max(item => item.MaxHeight) + serverConfig.MaxHeightAddition, 0, 1)
-                })
-                */
+                // Make sure attributes are not null
+                if (obj is Block block && block.Class == "Sapling")
+                {
+             //       obj.Class = modid + ":BlockEntityClimatizedSapling";
+                }
+            }
+            */
         }
         private string withinTreeGenCatagories(string generator)
         {
