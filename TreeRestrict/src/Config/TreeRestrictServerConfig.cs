@@ -46,13 +46,37 @@ namespace TreeRestrict.src.Config
 
         public Dictionary<string, string[]> treeGenCategories = new Dictionary<string, string[]>
         {
+            //Vanilla 
             {"silverbirch",["riverbirch", "himalayanbirch"] },
             { "englishoak" , ["oldenglishoak"]},
             {"sugarmaple" , ["japanesemaple", "norwaymaple", "mountainmaple"] },
             {"scotspine" , ["bristleconepine", "mountainpine","fir"] },
             {"larch" , ["deepforestlarch"] },
             {"baldcypress",["baldcypressswamp"] },
-            {"kapok",["largekapok", "largekapok2","oldkapok"] }
+            {"kapok",["largekapok", "largekapok2","oldkapok"] },
+
+            //Floral Zones
+            {"acaciaaneura",["acaciatetragonophylla"] },
+            {"afrocarpusfalcatus",["afrocarpusfalcatuslarge"]},
+            {"araucariaheterophylla",["araucariaheterophyllalarge"] },
+            {"birch",["betulaplatyphylla"] },
+            {"caricapapaya",["caricapapayaempty"] },
+            {"cocosnucifera",["cocosnuciferaempty", "cocosnuciferalow", "cocosnuciferashort"] },
+            {"corymbiaaparrerinja",["corymbiaaparrerinjacrooked"] },
+            {"ceibapentandra",["ceibapentandralarge"] },
+
+            {"dacrydiumcupressinum",["dacrydiumcupressinummedium", "dacrydiumcupressinumsmall"] },
+            {"diospyroswhyteana",["diospyroswhyteanaempty"] },
+            {"lagunculariaracemosa",["lagunculariaracemosaempty"] },
+
+            {"nothofagusmenziesii",["nothofagusmenziesiilarge"] },
+            
+            {"pinuscaribaea",["pinusdensiflora", "pinushalepensis", "pinustecunumanii"] },            
+            {"podocarpustotara",["podocarpustotaralarge"] },
+            {"psuedopanaxcrassifolius",["psuedopanaxcrassifoliusyoung"] },
+            {"pterocelastrustricuspidatus",["pterocelastrustricuspidatuslarge"] },
+            {"quercuscostaricensis",["quercuscostaricensistall"] },
+            {"roystonearegia",["roystonearegiaempty"] }
         };
 
         public string[] treeGenBlacklist = new string[] {"bamboo-grown-green", "bamboo-grown-brown" };
