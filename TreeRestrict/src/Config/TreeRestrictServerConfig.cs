@@ -50,6 +50,9 @@ namespace TreeRestrict.src.Config
         public float heightMaxBoundAddition = 0f;
 
 
+        //Blacklist is run before the catagory dictionary If a treeVariant is inside this string array then it means it will be excluded from climate checks.
+        public string[] treeGenBlacklist = new string[] { "bamboo-grown-green", "bamboo-grown-brown" };
+
 
         //Dictionary of tree gen categories. Basically it links all trees inside the array to the key value specified in a sapling's treegen property.
         //It's not neccecary to put the key in the values array, it checks for both.
@@ -86,9 +89,5 @@ namespace TreeRestrict.src.Config
             {"quercuscostaricensis",["quercuscostaricensistall"] },
             {"roystonearegia",["roystonearegiaempty"] }
         };
-
-        //Blacklist is run before the catagory dictionary If a treeVariant is inside this string array then it means it will be excluded from climate checks.
-        public string[] treeGenBlacklist = new string[] {"bamboo-grown-green", "bamboo-grown-brown" };
-
     }
 }

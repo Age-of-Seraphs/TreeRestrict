@@ -119,6 +119,10 @@ namespace TreeRestrict.src.Blocks
         {
             stage = ((!(byItemStack?.Collectible is ItemTreeSeed)) ? EnumTreeGrowthStage.Sapling : EnumTreeGrowthStage.Seed);
             plantedFromSeed = stage == EnumTreeGrowthStage.Seed;
+
+
+            //Currently I just straight multiply the growth time by the climate modifier + 1. I want to change this here specifically to use a more logarythmic curve defined in the mod config.
+            //This would let server admins have precise control over the maximum growth time that a tree can have, and how quickly the growth times can escalate.
             totalHoursTillGrowth = Api.World.Calendar.TotalHours + (double)(nextStageDaysRnd.nextFloat(1f, Api.World.Rand) * 24f * GrowthRateMod * GrowthRateModClimate);
         }
 
@@ -211,6 +215,7 @@ namespace TreeRestrict.src.Blocks
             var stringFlags = tree.GetString("climateFlags");
             if (stringFlags != null)
             {
+                //Need to find a better way then joining the arrays someday.
                 climateFlags = tree.GetString("climateFlags").Split(',').Select(float.Parse).ToArray();
             }
             else if (Api is ICoreServerAPI)
@@ -361,6 +366,9 @@ namespace TreeRestrict.src.Blocks
             if (saplingClimateConds.TryGetValue(text, out SaplingClimateCondition cond))
             {
                 treeGens.AddRange(cond.AssetLocations);
+
+                //This area here uses an array, someday I'll switch it to byte flags or something more efficient.
+
 
                 if (modConfig.enableStuntedGrowthTempurature)
                 {
