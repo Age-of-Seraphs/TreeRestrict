@@ -38,19 +38,27 @@ namespace TreeRestrict
             {
                 LoadServersideConfig((ICoreServerAPI)api);
             }
+
+            //Replaces the vanilla game BlockEntitySapling upon server start. (Should be save to add/remove the mod but I'm just guessing.)
+            //This also allows for adding modded sapling support without JSON patching for every possible mod.
             api.RegisterBlockEntityClass("Sapling", typeof(BlockEntityClimatizedSapling));
-            //modid + ":BlockEntityClimatizedSapling"
         }
 
         public override void AssetsLoaded(ICoreAPI api)
         {
             if (api.Side == EnumAppSide.Client) { return; }
 
-            var treeVariants = api.Assets.Get("worldgen/treengenproperties.json").ToObject<TreeGenProperties>()
-                .TreeGens.Where(x => !serverConfig.treeGenBlacklist.Contains(x.Generator.ToShortString()));
+            var treeVariants = api.Assets.Get("worldgen/treengenproperties.json").ToObject<TreeGenProperties>().TreeGens;
 
+
+            // All values from the configs are normalized before being added to the Object
             api.ObjectCache["saplingClimateConditionCache"] = treeVariants
                 .GroupBy(item => withinTreeGenCatagories(item.Generator.Path.ToString()))
+                
+                //Remove all groups within the blacklist
+                .Where(x => !serverConfig.treeGenBlacklist.Contains(x.Key))
+
+                //save tree variants to a new SaplingClimateCondition dictionary.
                 .ToDictionary(x => x.Key, group => new SaplingClimateCondition
                 {
                     AssetLocations = group.Select(item => item.Generator.Path.ToString()).ToHashSet(),
@@ -103,18 +111,18 @@ namespace TreeRestrict
         {
             try
             {
-                serverConfig = api.LoadModConfig<TreeRestrictServerConfig>("treerestrict-server.json");
+                serverConfig = api.LoadModConfig<TreeRestrictServerConfig>("Redbeard-Mods/climatespecifictrees-server.json");
                 if (serverConfig == null) //if the 'MyConfigData.json' file isn't found...
                 {
                     serverConfig = new TreeRestrictServerConfig();
                 }
                 //Save a copy of the mod config.
-                api.StoreModConfig<TreeRestrictServerConfig>(serverConfig, "treerestrict-server.json");
+                api.StoreModConfig<TreeRestrictServerConfig>(serverConfig, "Redbeard-Mods/climatespecifictrees-server.json");
             }
             catch (Exception e)
             {
                 //Couldn't load the mod config... Create a new one with default settings, but don't save it.
-                Mod.Logger.Error("Could not load treeRestrict server config! Loading default settings instead.");
+                Mod.Logger.Error("Could not load Climate Specific Trees server config! Loading default settings instead.");
                 Mod.Logger.Error(e);
                 serverConfig = new TreeRestrictServerConfig();
             }
@@ -123,18 +131,18 @@ namespace TreeRestrict
         {
             try
             {
-                clientConfig = api.LoadModConfig<TreeRestrictClientConfig>("treerestrict-client.json");
+                clientConfig = api.LoadModConfig<TreeRestrictClientConfig>("Redbeard-Mods/climatespecifictrees-client.json");
                 if (clientConfig == null) //if the 'MyConfigData.json' file isn't found...
                 {
                     clientConfig = new TreeRestrictClientConfig();
                 }
                 //Save a copy of the mod config.
-                api.StoreModConfig<TreeRestrictClientConfig>(clientConfig, "treerestrict-client.json");
+                api.StoreModConfig<TreeRestrictClientConfig>(clientConfig, "Redbeard-Mods/climatespecifictrees-client.json");
             }
             catch (Exception e)
             {
                 //Couldn't load the mod config... Create a new one with default settings, but don't save it.
-                Mod.Logger.Error("Could not load treeRestrict client config! Loading default settings instead.");
+                Mod.Logger.Error("Could not load Climate Specific Trees client config! Loading default settings instead.");
                 Mod.Logger.Error(e);
                 clientConfig = new TreeRestrictClientConfig();
             }

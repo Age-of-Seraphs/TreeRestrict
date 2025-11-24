@@ -11,6 +11,7 @@ namespace TreeRestrict.src.systems
 {
     public class SaplingClimateCondition
     {
+        //hashset of asset locations here is to be used for a future feature which grows the respecvtive tree type of that sapling. (river vs mountian birch)
         public HashSet<string> AssetLocations = new HashSet<string>();
         //new List<AssetLocation>();
         

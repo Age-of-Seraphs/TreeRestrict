@@ -2,11 +2,11 @@
     "$schema": "https://moddbcdn.vintagestory.at/schema/modinfo.latest.json",
     "type": "Code",
     "modid": "treerestrict",
-    "name": "TreeRestrict",
+    "name": "Climate Specific Trees",
     "authors": [
         "Captanredbeard"
     ],
-    "description": "To be added",
+    "description": "Increases Growth Times for saplings outside of the biomes they generate in.",
     "version": "1.0.0",
     "dependencies": {
         "game": "1.21.0"
